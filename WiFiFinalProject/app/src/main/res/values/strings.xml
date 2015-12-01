@@ -1,6 +1,16 @@
 <resources>
+    <!--
+
+    SHA-1 : E5:28:3C:F8:48:6D:84:5B:CA:9D:D7:56:25:80:38:4D:6C:D6:50:2C
+
+    API key : AIzaSyDnnsmCxbCVcPAyeP8Ia2h875tqYs05AFc
+    -->
+
+
     <string name="app_name">WiFiFinalProject</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+
+
 </resources>
