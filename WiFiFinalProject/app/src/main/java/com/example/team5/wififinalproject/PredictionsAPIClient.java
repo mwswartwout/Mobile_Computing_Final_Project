@@ -9,6 +9,7 @@ import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInsta
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
@@ -35,6 +36,7 @@ import org.json.simple.parser.ParseException;
 import org.json.simple.parser.JSONParser;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -62,7 +64,9 @@ public class PredictionsAPIClient {
     private static final String APPLICATION_NAME = "WifiLocationFinder";
     private static final String TRAINING_DATA_LOCATION = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM + "/FinalProject/TrainingSet.csv").toString();
     private static final String TEST_DATA_LOCATION = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM + "/FinalProject/TestSet.csv").toString();
-    private static final String OAUTH_DATA_LOCATION = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM + "/FinalProject/client_secrets.json").toString();
+    //private static final String OAUTH_DATA_LOCATION = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM + "/FinalProject/client_secrets.json").toString();
+    //private static final String OAUTH_DATA_LOCATION = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM + "/FinalProject/WiFi Location Predicter-8a1736dfeecc.json").toString();
+    private static final String OAUTH_DATA_LOCATION = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM + "/FinalProject/WiFi Location Predicter-47e810de7920.p12").toString();
     private static final String PROJECT_NAME = "890533042990";
     private static final String MODEL_ID = "modelId" + Math.random();
 
@@ -103,8 +107,8 @@ public class PredictionsAPIClient {
             System.out.println("External storage isn't readable");
             return null;
         }
-        FileReader reader = new FileReader(OAUTH_DATA_LOCATION);
-        GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, reader);
+        //FileReader reader = new FileReader(OAUTH_DATA_LOCATION);
+        //GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, reader);
         System.out.println("Created clientSecrets");
         /*if (clientSecrets.getDetails().getClientId().startsWith("Enter") ||
                 clientSecrets.getDetails().getClientSecret().startsWith("Enter ")) {
@@ -130,13 +134,23 @@ public class PredictionsAPIClient {
         scopes.add(PredictionScopes.PREDICTION);
 
         System.out.println("Created scopes");
-        GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
-                httpTransport, JSON_FACTORY, clientSecrets, scopes)
-                .setDataStoreFactory(dataStoreFactory)
-                .build();
+        //GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
+        //        httpTransport, JSON_FACTORY, clientSecrets, scopes)
+        //        .setDataStoreFactory(dataStoreFactory)
+        //        .build();
         System.out.println("GoogleAuthorizationCodeFlow.Builder created");
 
-        Credential cred = new GetCredentialsTask().execute(flow).get();
+        //Credential cred = new GetCredentialsTask().execute(flow).get();
+        String emailAddress = "account-1@onyx-park-114601.iam.gserviceaccount.com";
+
+        GoogleCredential cred = new GoogleCredential.Builder()
+                .setTransport(httpTransport)
+                .setJsonFactory(JSON_FACTORY)
+                .setServiceAccountId(emailAddress)
+                .setServiceAccountPrivateKeyFromP12File(new File(OAUTH_DATA_LOCATION))
+                .setServiceAccountScopes(scopes)
+                .build();
+
         System.out.println("Created Credential from task");
 
         return cred;
