@@ -104,6 +104,7 @@ public class PredictionsAPIClient {
         }
         FileReader reader = new FileReader(OAUTH_DATA_LOCATION);
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, reader);
+        System.out.println("Created clientSecrets");
         /*if (clientSecrets.getDetails().getClientId().startsWith("Enter") ||
                 clientSecrets.getDetails().getClientSecret().startsWith("Enter ")) {
             System.out.println(
@@ -127,12 +128,18 @@ public class PredictionsAPIClient {
         scopes.add(PredictionScopes.DEVSTORAGE_READ_WRITE);
         scopes.add(PredictionScopes.PREDICTION);
 
+        System.out.println("Created scopes");
         GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
                 httpTransport, JSON_FACTORY, clientSecrets, scopes)
                 .setDataStoreFactory(dataStoreFactory)
                 .build();
+        System.out.println("GoogleAuthorizationCodeFlow.Builder created");
         // authorize
-        return new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
+
+        Credential cred = new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
+        System.out.println("Created AuthorizationCodeInstalledInstallApp");
+        
+        return cred;
     }
 
     private static List<TrainingInstances> getTrainingData() throws IOException {
