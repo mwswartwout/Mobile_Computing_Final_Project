@@ -353,10 +353,18 @@ public class PredictionsAPIClient {
 class GetCredentialsTask extends AsyncTask<GoogleAuthorizationCodeFlow, Void, Credential> {
     protected Credential doInBackground(GoogleAuthorizationCodeFlow... flow) {
         try {
-            Credential cred = new AuthorizationCodeInstalledApp(flow[0], new LocalServerReceiver()).authorize("user");
+            LocalServerReceiver srv = new LocalServerReceiver();
+            System.out.println("Crated LocalServerReceiver");
+
+            AuthorizationCodeInstalledApp acia = new AuthorizationCodeInstalledApp(flow[0], srv);
+            System.out.println("Created AuthorizationCodeInstaleldApp");
+
+            Credential cred = acia.authorize("user");
+            System.out.println("Authorized credential");
             return cred;
         } catch (IOException e) {
             System.out.println("Caught IOException in GetCredentialTask");
+            e.printStackTrace();
         }
 
         return null;
