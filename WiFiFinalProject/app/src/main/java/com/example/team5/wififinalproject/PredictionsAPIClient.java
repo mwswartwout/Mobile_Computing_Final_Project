@@ -104,7 +104,7 @@ public class PredictionsAPIClient {
         }
         FileReader reader = new FileReader(OAUTH_DATA_LOCATION);
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, reader);
-        if (clientSecrets.getDetails().getClientId().startsWith("Enter") ||
+        /*if (clientSecrets.getDetails().getClientId().startsWith("Enter") ||
                 clientSecrets.getDetails().getClientSecret().startsWith("Enter ")) {
             System.out.println(
                     "Overwrite the src/main/resources/client_secrets.json file with the client secrets file "
@@ -112,7 +112,7 @@ public class PredictionsAPIClient {
                             + "from https://code.google.com/apis/console/?api=prediction#project:858822147939 "
                             + "into src/main/resources/client_secrets.json");
             System.exit(1);
-        }
+        }*/
 
         // Set up authorization code flow.
         // Ask for only the permissions you need. Asking for more permissions will
