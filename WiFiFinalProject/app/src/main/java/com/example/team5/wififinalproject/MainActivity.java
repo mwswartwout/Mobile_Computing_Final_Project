@@ -28,6 +28,8 @@ public class MainActivity extends Activity {
     public Button btnCollect;
     public Button btnTest;
     public Button btnSaveLocation;
+    public Button btnTrain;
+    public Button btnPredict;
     public String location = null;
     public EditText editLocation;
     public BroadcastReceiver getWifiBSSID;
@@ -39,6 +41,8 @@ public class MainActivity extends Activity {
     public File TestSet = new File (directory,testset);
 
     public int count = 0;
+
+    public PredictionsAPIClient predictions;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +58,14 @@ public class MainActivity extends Activity {
         btnTest = (Button) findViewById(R.id.btnTest);
         btnTest.setEnabled(false);
 
+        btnTrain = (Button) findViewById(R.id.btnTrain);
+        btnTrain.setEnabled(false);
+
+        btnPredict = (Button) findViewById(R.id.btnPredict);
+        btnPredict.setEnabled(false);
+
+        predictions = new PredictionsAPIClient();
+        predictions.setup();
         /*
         try {
             if (!TrainingSet.exists()) {
@@ -112,6 +124,7 @@ public class MainActivity extends Activity {
 
 
                 btnTest.setEnabled(true);
+                btnTrain.setEnabled(true);
             }
         });
 
@@ -155,6 +168,20 @@ public class MainActivity extends Activity {
             }
         });
 
+        btnTrain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View V) {
+                predictions.train();
+                btnPredict.setEnabled(true);
+            }
+        });
+
+        btnPredict.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                predictions.predict();
+            }
+        });
 /*
         registerReceiver(new BroadcastReceiver() {
             @Override

@@ -83,6 +83,9 @@ public class PredictionsAPIClient {
     @SuppressWarnings("unused")
     private static Prediction client;
 
+    PredictionsAPIClient()
+    {}
+
     /**
      * Authorizes the installed application to access user's protected data.
      */

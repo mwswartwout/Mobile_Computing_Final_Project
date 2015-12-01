@@ -19,16 +19,16 @@
         android:layout_height="wrap_content"
         android:id="@+id/editLocation"
         android:hint = "Enter your current location"
+        android:layout_marginTop="84dp"
         android:layout_alignParentTop="true"
-        android:layout_alignStart="@+id/btnCollect"
-        android:layout_marginTop="166dp" />
+        android:layout_alignStart="@+id/btnCollect" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Save your location"
         android:id="@+id/btnSaveLocation"
-        android:layout_centerVertical="true"
+        android:layout_below="@+id/editLocation"
         android:layout_alignStart="@+id/editLocation" />
 
     <Button
@@ -36,6 +36,23 @@
         android:layout_height="wrap_content"
         android:text="Collect test data"
         android:id="@+id/btnTest"
-        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/btnCollect"
         android:layout_alignStart="@+id/btnCollect" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Train with Training Data"
+        android:id="@+id/btnTrain"
+        android:layout_below="@+id/btnTest"
+        android:layout_alignStart="@+id/btnTest"
+        android:layout_marginTop="29dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Predict with Test Data"
+        android:id="@+id/btnPredict"
+        android:layout_below="@+id/btnTrain"
+        android:layout_alignStart="@+id/btnTrain" />
 </RelativeLayout>
