@@ -1,5 +1,6 @@
 package com.example.team5.wififinalproject;
 
+import android.os.AsyncTask;
 import android.os.Environment;
 
 import com.google.api.client.auth.oauth2.Credential;
@@ -134,11 +135,10 @@ public class PredictionsAPIClient {
                 .setDataStoreFactory(dataStoreFactory)
                 .build();
         System.out.println("GoogleAuthorizationCodeFlow.Builder created");
-        // authorize
 
-        Credential cred = new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
-        System.out.println("Created AuthorizationCodeInstalledInstallApp");
-        
+        Credential cred = new GetCredentialsTask().execute(flow).get();
+        System.out.println("Created Credential from task");
+
         return cred;
     }
 
@@ -347,5 +347,18 @@ public class PredictionsAPIClient {
             return true;
         }
         return false;
+    }
+}
+
+class GetCredentialsTask extends AsyncTask<GoogleAuthorizationCodeFlow, Void, Credential> {
+    protected Credential doInBackground(GoogleAuthorizationCodeFlow... flow) {
+        try {
+            Credential cred = new AuthorizationCodeInstalledApp(flow[0], new LocalServerReceiver()).authorize("user");
+            return cred;
+        } catch (IOException e) {
+            System.out.println("Caught IOException in GetCredentialTask");
+        }
+
+        return null;
     }
 }
