@@ -3,6 +3,7 @@ package com.example.team5.wififinalproject;
 import android.os.Environment;
 
 import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
@@ -270,7 +271,7 @@ public class PredictionsAPIClient {
         try {
             System.out.println("Initializing httpTransport");
             // initialize the transport
-            httpTransport = GoogleNetHttpTransport.newTrustedTransport();
+            httpTransport = AndroidHttp.newCompatibleTransport();
             System.out.println("Finished initializing httpTransport");
 
             System.out.println("Initializing dataStoreFactory");
@@ -282,7 +283,7 @@ public class PredictionsAPIClient {
             // authorization
             credential = authorize();
             System.out.println("Finished authorizing credentials");
-            
+
         } catch (IOException e) {
             System.err.println(e.getMessage());
         } catch (Throwable t) {
