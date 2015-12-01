@@ -1,3 +1,5 @@
+package com.example.team5.wififinalproject;
+
 public enum Location{
 	GLENNAN1{
 		@Override
