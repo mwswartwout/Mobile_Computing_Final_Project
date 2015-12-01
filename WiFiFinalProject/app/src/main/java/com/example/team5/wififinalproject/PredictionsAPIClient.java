@@ -157,6 +157,7 @@ public class PredictionsAPIClient {
     }
 
     private static List<TrainingInstances> getTrainingData() throws IOException {
+        System.out.println("Getting training data...");
         List<TrainingInstances> instances = new ArrayList<TrainingInstances>();
 
         //stream read the data file
@@ -167,9 +168,9 @@ public class PredictionsAPIClient {
         while ((line = br.readLine()) != null) {
             String partitionToken = ",";
             int partition = line.indexOf(partitionToken);
-            System.out.println("partition value is " +partition);
+            //System.out.println("partition value is " +partition);
             String output = line.substring(0, partition);
-            System.out.println("substring is " + output);
+            //System.out.println("substring is " + output);
             List<Object> features = new ArrayList<Object>();
             features.add(line.substring(partition + partitionToken.length()));
 
@@ -178,29 +179,35 @@ public class PredictionsAPIClient {
             );
         }
 
+        System.out.println("Training data retrieval complete");
         return instances;
     }
 
     private static String getTestData() throws IOException {
+        System.out.println("Getting test data...");
         String testData;
 
         FileReader isr = new FileReader(TEST_DATA_LOCATION);
         BufferedReader br = new BufferedReader(isr);
 
         if ((testData = br.readLine()) != null) {
+            System.out.println("Test data retrieval complete");
             return testData;
         }
 
+        System.out.println("Test data retrieval unsuccessful");
         return null;
     }
     private static Insert2 responseToObject(String jsonString) {
-
+        System.out.println("responseToObject call starting");
         Insert2 res = new Insert2();
         JSONParser parser = new JSONParser();
         try {
-
+            System.out.println("Parsing JSON object...");
             JSONObject obj = (JSONObject) parser.parse(jsonString);
+            System.out.println("JSON object successfully parsed");
             DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+            System.out.println("Got date");
             res.setCreated(new DateTime((Date) formatter.parse((String) obj.get("created"))));
             res.setId((String) obj.get("id"));
             res.setKind((String) obj.get("kind"));
@@ -208,7 +215,7 @@ public class PredictionsAPIClient {
             res.setTrainingStatus((String) obj.get("trainingStatus"));
 
             if (obj.get("trainingComplete") != null) {
-
+                System.out.println("Got a traning complete object");
                 res.setTrainingComplete(new DateTime((Date) formatter.parse((String) obj.get("trainingComplete"))));
                 JSONObject ml = (JSONObject) obj.get("modelInfo");
                 Insert2.ModelInfo modelInfo = new ModelInfo();
@@ -221,47 +228,65 @@ public class PredictionsAPIClient {
             }
 
         } catch (ParseException e) {
+            System.out.println("Caught a ParseException in responseToObject");
             e.printStackTrace();
             res = null;
         } catch (java.text.ParseException e) {
+            System.out.println("Caught a java.text.ParseException in responseToObject");
             e.printStackTrace();
             res = null;
         }
+        System.out.println("reponseToObject call complete");
         return res;
 
     }
 
     private static void predict(Prediction prediction, String text) throws IOException {
-
+        System.out.println("Starting inner predict call");
         Input input = new Input();
         InputInput inputInput = new InputInput();
         inputInput.setCsvInstance(Collections.<Object>singletonList(text));
         input.setInput(inputInput);
-        Output output = prediction.trainedmodels().predict(PROJECT_NAME, MODEL_ID, input).execute();
-
+        System.out.println("Created input");
+        PredictionParams params = new PredictionParams(prediction, PROJECT_NAME, MODEL_ID, input);
+        Output output = null;
+        try {
+            output = new doPrediction().execute(params).get();
+        } catch (Exception e) {
+            System.out.println("Caught exception in predict call");
+            e.printStackTrace();
+        }
         System.out.println("MAC Addresses: " + text);
         System.out.println("Predicted location: " + output.getOutputLabel());
-
+        System.out.println("Finished inner predict call");
     }
 
     private static void train(Prediction prediction) throws IOException {
+        System.out.println("Starting inner train call");
         //start the training process of the google APIs
         //provide the training sample via embedding data inside requests
         List<TrainingInstances> instances = getTrainingData();
         Insert insert = new Insert().setTrainingInstances(instances);
+        System.out.println("Inserted training data");
         insert.setFactory(JSON_FACTORY);
         insert.setId(MODEL_ID);
-        prediction.trainedmodels().insert(PROJECT_NAME, insert).execute();
-
+        System.out.println("Ready to insert");
+        InsertParams params = new InsertParams(prediction, insert, PROJECT_NAME);
+        new insertTrainingData().execute(params);
+        System.out.println("Called trainedmodels.insert");
         int triesCounter = 0;
         while (triesCounter < 1000) {
             try {
-
-                HttpResponse httpResponse = prediction.trainedmodels().get(PROJECT_NAME, MODEL_ID).executeUnparsed();
+                System.out.println("Trying to get http response");
+                ResponseParams responseParams = new ResponseParams(prediction, PROJECT_NAME, MODEL_ID);
+                HttpResponse httpResponse = new getHttpReponse().execute(responseParams).get();
 
                 if (httpResponse.getStatusCode() == 200) {
-
-                    Insert2 res = responseToObject(httpResponse.parseAsString());
+                    System.out.println("Got status code 200");
+                    String response = new getReponseString().execute(httpResponse).get();
+                    System.out.println("Converted respose to string");
+                    Insert2 res = responseToObject(response);
+                    System.out.println("Successfully retrieved response to object");
 
                     if (res.getTrainingStatus().compareTo("DONE") == 0) {
 
@@ -272,7 +297,7 @@ public class PredictionsAPIClient {
                     }
 
                 } else {
-
+                    System.out.println("Got response that is going to be ignored");
                     httpResponse.ignore();
 
                 }
@@ -283,7 +308,7 @@ public class PredictionsAPIClient {
                 triesCounter++;
 
             } catch (Exception e) {
-
+                System.out.println("Caught Exception while waiting for http response in inner train call");
                 e.printStackTrace();
                 break;
 
@@ -322,6 +347,7 @@ public class PredictionsAPIClient {
     }
 
     public static void train() {
+        System.out.println("Starting outer train call");
         try {
             // set up global Prediction instance
             client = new Prediction.Builder(httpTransport, JSON_FACTORY, credential)
@@ -335,6 +361,7 @@ public class PredictionsAPIClient {
         } catch (Throwable t) {
             t.printStackTrace();
         }
+        System.out.println("Outer train call complete");
     }
 
     public static void predict() {
@@ -385,5 +412,112 @@ class GetCredentialsTask extends AsyncTask<GoogleAuthorizationCodeFlow, Void, Cr
         }
 
         return null;
+    }
+}
+
+class insertTrainingData extends AsyncTask<InsertParams, Void, Void> {
+    protected Void doInBackground(InsertParams... params) {
+        try {
+            Prediction prediction = params[0].prediction;
+            Insert insert = params[0].insert;
+            String PROJECT_NAME = params[0].PROJECT_NAME;
+
+            prediction.trainedmodels().insert(PROJECT_NAME, insert).execute();
+        } catch (IOException e) {
+            System.out.println("Caught IO Exception in insertTrainingData task");
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+}
+
+class InsertParams {
+    public Prediction prediction;
+    public Insert insert;
+    public String PROJECT_NAME;
+
+    InsertParams(Prediction prediction, Insert insert, String name) {
+        this.prediction = prediction;
+        this.insert = insert;
+        PROJECT_NAME = name;
+    }
+}
+
+class getHttpReponse extends AsyncTask<ResponseParams , Void, HttpResponse> {
+    protected HttpResponse doInBackground(ResponseParams... params) {
+        Prediction prediction = params[0].prediction;
+        String PROJECT_NAME = params[0].PROJECT_NAME;
+        String MODEL_ID = params[0].MODEL_ID;
+
+        try {
+            HttpResponse httpResponse = prediction.trainedmodels().get(PROJECT_NAME, MODEL_ID).executeUnparsed();
+            return httpResponse;
+
+        } catch (IOException e) {
+            System.out.println("Caught IO Exception in getHttpResponse task");
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+}
+
+class ResponseParams {
+    public Prediction prediction;
+    public String PROJECT_NAME;
+    public String MODEL_ID;
+
+    ResponseParams(Prediction prediction, String name, String id) {
+        this.prediction = prediction;
+        PROJECT_NAME = name;
+        MODEL_ID = id;
+    }
+}
+
+class getReponseString extends AsyncTask<HttpResponse, Void, String> {
+    protected String doInBackground(HttpResponse... params) {
+        HttpResponse response = params[0];
+        String string = null;
+        try {
+            string = response.parseAsString();
+        } catch (IOException e) {
+            System.out.println("Caught IO Exception in getResponseString task");
+            e.printStackTrace();
+        }
+        return string;
+    }
+}
+
+class doPrediction extends AsyncTask<PredictionParams, Void, Output> {
+    protected Output doInBackground(PredictionParams... params) {
+        Prediction prediction = params[0].prediction;
+        String PROJECT_NAME = params[0].PROJECT_NAME;
+        String MODEL_ID = params[0].MODEL_ID;
+        Input input = params[0].input;
+
+        Output output = null;
+        try {
+            output = prediction.trainedmodels().predict(PROJECT_NAME, MODEL_ID, input).execute();
+        } catch (IOException e) {
+            System.out.println("Caught IO Exception in doPrediction task");
+            e.printStackTrace();
+        }
+
+        return output;
+    }
+}
+
+class PredictionParams {
+    public Prediction prediction;
+    public String PROJECT_NAME;
+    public String MODEL_ID;
+    public Input input;
+
+    PredictionParams(Prediction prediction, String name, String id, Input input) {
+        this.prediction = prediction;
+        PROJECT_NAME = name;
+        MODEL_ID = id;
+        this.input = input;
     }
 }
