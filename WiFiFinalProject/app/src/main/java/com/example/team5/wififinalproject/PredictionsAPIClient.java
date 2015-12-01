@@ -34,7 +34,9 @@ import org.json.simple.parser.ParseException;
 import org.json.simple.parser.JSONParser;
 
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -96,8 +98,12 @@ public class PredictionsAPIClient {
      */
     private static Credential authorize() throws Exception {
         // load client secrets
-        InputStreamReader isr = new InputStreamReader(PredictionsAPIClient.class.getResourceAsStream(OAUTH_DATA_LOCATION));
-        GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, isr);
+        if (!isExternalStorageReadable()) {
+            System.out.println("External storage isn't readable");
+            return null;
+        }
+        FileReader reader = new FileReader(OAUTH_DATA_LOCATION);
+        GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, reader);
         if (clientSecrets.getDetails().getClientId().startsWith("Enter") ||
                 clientSecrets.getDetails().getClientSecret().startsWith("Enter ")) {
             System.out.println(
@@ -315,5 +321,24 @@ public class PredictionsAPIClient {
         } catch (Throwable t) {
             t.printStackTrace();
         }
+    }
+
+    /* Checks if external storage is available for read and write */
+    public boolean isExternalStorageWritable() {
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            return true;
+        }
+        return false;
+    }
+
+    /* Checks if external storage is available to at least read */
+    public static boolean isExternalStorageReadable() {
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state) ||
+                Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
+            return true;
+        }
+        return false;
     }
 }
