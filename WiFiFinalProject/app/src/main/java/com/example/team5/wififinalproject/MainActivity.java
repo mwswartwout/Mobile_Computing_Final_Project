@@ -194,7 +194,6 @@ public class MainActivity extends Activity {
             }
         }, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
 */
-
     }
 
 

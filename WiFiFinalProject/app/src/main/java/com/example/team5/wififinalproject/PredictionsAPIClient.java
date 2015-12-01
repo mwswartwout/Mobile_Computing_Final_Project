@@ -1,5 +1,7 @@
 package com.example.team5.wififinalproject;
 
+import android.os.Environment;
+
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
@@ -54,7 +56,8 @@ public class PredictionsAPIClient {
      * blank, the application will log a warning. Suggested format is "MyCompany-ProductName/1.0".
      */
     private static final String APPLICATION_NAME = "WifiLocationFinder";
-    private static final String STORAGE_DATA_LOCATION = "/wifi_id.txt";
+    private static final String TRAINING_DATA_LOCATION = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM + "/FinalProject/TrainingSet.csv").toString();
+    private static final String TEST_DATA_LOCATION = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM + "/FinalProject/TestSet.csv").toString();
     private static final String PROJECT_NAME = "890533042990";
     private static final String MODEL_ID = "modelId" + Math.random();
 
@@ -62,7 +65,7 @@ public class PredictionsAPIClient {
      * Directory to store user credentials.
      */
     private static final java.io.File DATA_STORE_DIR =
-            new java.io.File(System.getProperty("user.home"), ".store/prediction_sample");
+            new java.io.File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM + "/FinalProject").toString());
 
     /**
      * Global instance of the {@link DataStoreFactory}. The best practice is to make it a single
@@ -128,7 +131,7 @@ public class PredictionsAPIClient {
         List<TrainingInstances> instances = new ArrayList<TrainingInstances>();
 
         //stream read the data file
-        InputStreamReader isr = new InputStreamReader(PredictionsAPIClient.class.getResourceAsStream(STORAGE_DATA_LOCATION));
+        InputStreamReader isr = new InputStreamReader(PredictionsAPIClient.class.getResourceAsStream(TRAINING_DATA_LOCATION));
         BufferedReader br = new BufferedReader(isr);
 
         String line = null;
@@ -147,6 +150,18 @@ public class PredictionsAPIClient {
         return instances;
     }
 
+    private static String getTestData() throws IOException {
+        String testData;
+
+        InputStreamReader isr = new InputStreamReader(PredictionsAPIClient.class.getResourceAsStream(TEST_DATA_LOCATION));
+        BufferedReader br = new BufferedReader(isr);
+
+        if ((testData = br.readLine()) != null) {
+            return testData;
+        }
+
+        return null;
+    }
     private static Insert2 responseToObject(String jsonString) {
 
         Insert2 res = new Insert2();
@@ -285,9 +300,7 @@ public class PredictionsAPIClient {
 
     public static void predict() {
         try {
-            String sample = "This version of the simple language";
-            predict(client, sample);
-
+            predict(client, getTestData());
         } catch (IOException e) {
             System.err.println(e.getMessage());
         } catch (Throwable t) {
