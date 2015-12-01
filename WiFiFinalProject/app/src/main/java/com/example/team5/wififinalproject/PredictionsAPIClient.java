@@ -357,7 +357,7 @@ class GetCredentialsTask extends AsyncTask<GoogleAuthorizationCodeFlow, Void, Cr
             System.out.println("Crated LocalServerReceiver");
 
             AuthorizationCodeInstalledApp acia = new AuthorizationCodeInstalledApp(flow[0], srv);
-            System.out.println("Created AuthorizationCodeInstaleldApp");
+            System.out.println("Created AuthorizationCodeInstalledApp");
 
             Credential cred = acia.authorize("user");
             System.out.println("Authorized credential");
