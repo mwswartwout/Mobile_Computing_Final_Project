@@ -59,7 +59,7 @@ public class PredictionsAPIClient {
     private static final String APPLICATION_NAME = "WifiLocationFinder";
     private static final String TRAINING_DATA_LOCATION = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM + "/FinalProject/TrainingSet.csv").toString();
     private static final String TEST_DATA_LOCATION = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM + "/FinalProject/TestSet.csv").toString();
-    private static final String OAUTH_DATA_LOCATION = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM + "/FinalProject/client_secrets.csv").toString();
+    private static final String OAUTH_DATA_LOCATION = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM + "/FinalProject/client_secrets.json").toString();
     private static final String PROJECT_NAME = "890533042990";
     private static final String MODEL_ID = "modelId" + Math.random();
 
