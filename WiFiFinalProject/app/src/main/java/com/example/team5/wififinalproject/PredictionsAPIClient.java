@@ -59,6 +59,7 @@ public class PredictionsAPIClient {
     private static final String APPLICATION_NAME = "WifiLocationFinder";
     private static final String TRAINING_DATA_LOCATION = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM + "/FinalProject/TrainingSet.csv").toString();
     private static final String TEST_DATA_LOCATION = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM + "/FinalProject/TestSet.csv").toString();
+    private static final String OAUTH_DATA_LOCATION = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM + "/FinalProject/client_secrets.csv").toString();
     private static final String PROJECT_NAME = "890533042990";
     private static final String MODEL_ID = "modelId" + Math.random();
 
@@ -96,7 +97,7 @@ public class PredictionsAPIClient {
     private static Credential authorize() throws Exception {
         // load client secrets
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY,
-                new InputStreamReader(PredictionsAPIClient.class.getResourceAsStream("/client_secrets.json")));
+                new InputStreamReader(PredictionsAPIClient.class.getResourceAsStream(OAUTH_DATA_LOCATION)));
         if (clientSecrets.getDetails().getClientId().startsWith("Enter") ||
                 clientSecrets.getDetails().getClientSecret().startsWith("Enter ")) {
             System.out.println(
