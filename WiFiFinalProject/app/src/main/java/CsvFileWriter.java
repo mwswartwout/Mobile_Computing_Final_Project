@@ -74,57 +74,6 @@ public class CsvFileWriter{
                 for (int i=0; i<50; i++){
                         addresses.add("address " + i);
                 }
-                writeCsvFile(Location.GLENNAN4, addresses);                
-        }
-}
-
-enum Location{
-        GLENNAN1{
-                @Override
-                public String toString(){
-                        return "Glennan1";
-                }
-        },
-        GLENNAN2{
-                @Override
-                public String toString(){
-                        return "Glennan2";
-                }
-        },
-        GLENNAN3{
-                @Override
-                public String toString(){
-                        return "Glennan3";
-                }
-        },
-        GLENNAN4{
-                @Override
-                public String toString(){
-                        return "Glennan4";
-                }
-        },
-        GLENNAN5{
-                @Override
-                public String toString(){
-                        return "Glennan5";
-                }
-        },
-        GLENNAN6{
-                @Override
-                public String toString(){
-                        return "Glennan6";
-                }
-        },
-        GLENNAN7{
-                @Override
-                public String toString(){
-                        return "Glennan7";
-                }
-        },
-        GLENNAN8{
-                @Override
-                public String toString(){
-                        return "Glennan8";
-                }
+                writeCsvFile(Location.GLENNAN5, addresses);                
         }
 }
