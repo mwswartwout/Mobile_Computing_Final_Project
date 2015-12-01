@@ -160,14 +160,16 @@ public class PredictionsAPIClient {
         List<TrainingInstances> instances = new ArrayList<TrainingInstances>();
 
         //stream read the data file
-        InputStreamReader isr = new InputStreamReader(PredictionsAPIClient.class.getResourceAsStream(TRAINING_DATA_LOCATION));
+        FileReader isr = new FileReader(TRAINING_DATA_LOCATION);
         BufferedReader br = new BufferedReader(isr);
 
         String line = null;
         while ((line = br.readLine()) != null) {
-            String partitionToken = ", ";
+            String partitionToken = ",";
             int partition = line.indexOf(partitionToken);
+            System.out.println("partition value is " +partition);
             String output = line.substring(0, partition);
+            System.out.println("substring is " + output);
             List<Object> features = new ArrayList<Object>();
             features.add(line.substring(partition + partitionToken.length()));
 
@@ -182,7 +184,7 @@ public class PredictionsAPIClient {
     private static String getTestData() throws IOException {
         String testData;
 
-        InputStreamReader isr = new InputStreamReader(PredictionsAPIClient.class.getResourceAsStream(TEST_DATA_LOCATION));
+        FileReader isr = new FileReader(TEST_DATA_LOCATION);
         BufferedReader br = new BufferedReader(isr);
 
         if ((testData = br.readLine()) != null) {
@@ -329,6 +331,7 @@ public class PredictionsAPIClient {
             train(client);
         } catch (IOException e) {
             System.err.println(e.getMessage());
+            e.printStackTrace();
         } catch (Throwable t) {
             t.printStackTrace();
         }
