@@ -96,8 +96,8 @@ public class PredictionsAPIClient {
      */
     private static Credential authorize() throws Exception {
         // load client secrets
-        GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY,
-                new InputStreamReader(PredictionsAPIClient.class.getResourceAsStream(OAUTH_DATA_LOCATION)));
+        InputStreamReader isr = new InputStreamReader(PredictionsAPIClient.class.getResourceAsStream(OAUTH_DATA_LOCATION));
+        GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, isr);
         if (clientSecrets.getDetails().getClientId().startsWith("Enter") ||
                 clientSecrets.getDetails().getClientSecret().startsWith("Enter ")) {
             System.out.println(
