@@ -266,16 +266,23 @@ public class PredictionsAPIClient {
 
     public static void setup()
     {
+        System.out.println("Starting Predictions API setup");
         try {
+            System.out.println("Initializing httpTransport");
             // initialize the transport
             httpTransport = GoogleNetHttpTransport.newTrustedTransport();
+            System.out.println("Finished initializing httpTransport");
 
+            System.out.println("Initializing dataStoreFactory");
             // initialize the data store factory
             dataStoreFactory = new FileDataStoreFactory(DATA_STORE_DIR);
+            System.out.println("Finished initializing dataStoreFactory");
 
+            System.out.println("Authorizing credentials...");
             // authorization
             credential = authorize();
-
+            System.out.println("Finished authorizing credentials");
+            
         } catch (IOException e) {
             System.err.println(e.getMessage());
         } catch (Throwable t) {
