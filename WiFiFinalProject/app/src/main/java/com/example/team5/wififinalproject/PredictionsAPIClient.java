@@ -174,17 +174,28 @@ public class PredictionsAPIClient {
 
         String line = null;
         while ((line = br.readLine()) != null) {
-            String partitionToken = ",";
-            int partition = line.indexOf(partitionToken);
-            //System.out.println("partition value is " +partition);
-            String output = line.substring(0, partition);
-            //System.out.println("substring is " + output);
-            List<Object> features = new ArrayList<Object>();
-            features.add(line.substring(partition + partitionToken.length()));
-
+            int partition = line.indexOf(",");
+            String output = line.substring(0,partition);
+            System.out.println("output is " + output);
+            line = line.substring(partition);
+            String substring;
+            List<Object> features = null;
+            while (line.indexOf(",") != -1){
+                //String partitionToken = ",";
+                partition = line.indexOf(",");
+                //System.out.println("partition value is " +partition);
+                substring = line.substring(0, partition);
+                System.out.println("Substring is " + output);
+                //System.out.println("substring is " + output);
+                features = new ArrayList<Object>();
+                features.add(substring);
+                line = line.substring(partition);
+            }
             instances.add(new TrainingInstances().setOutput(output)
                             .setCsvInstance(features)
             );
+            features.clear();
+
         }
 
         System.out.println("Training data retrieval complete");
